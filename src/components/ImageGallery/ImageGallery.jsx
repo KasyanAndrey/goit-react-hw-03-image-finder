@@ -1,9 +1,16 @@
 import React from 'react';
 import s from './ImageGallery.module.css'
+import ImageGalleryItem from '../ImageGalleryItem';
 
-const ImageGallery = (props) => (
-  <ul className={s.ImageGallery}></ul>
-);
+function ImageGallery({ images }) {
+  return (
+    <ul className={s.ImageGallery}>
+      <ImageGalleryItem images={images} />
+    </ul>
+  );
+}
+
+
 
 export default ImageGallery;
 

@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+// import fetchQuery from '../../services/servicesApi';
+import QueryErrorView from './QueryErrorView';
+import ImageGallery from '../ImageGallery';
+import QueryPending from '../Loader';
 
 class QueryInfo extends Component {
   state = {
@@ -17,21 +21,23 @@ class QueryInfo extends Component {
     if (prevQuery !== nextQuery) {
       this.setState({ status: 'pending' });
 
-      fetch(
-        `${this.state.url}?q=${nextQuery}&page=${this.state.page}&key=${this.state.apiKey}&image_type=photo&orientation=horizontal&per_page=12`,
-      )
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          }
+      setTimeout(() => {
+        fetch(
+          `${this.state.url}?q=${nextQuery}&page=${this.state.page}&key=${this.state.apiKey}&image_type=photo&orientation=horizontal&per_page=12`,
+        )
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
 
-          return Promise.reject(
-            new Error(`No pictures with title ${nextQuery}`),
-          );
-        })
-        .then(data => data.hits)
-        .then(images => this.setState({ images, status: 'resolved' }))
-        .catch(error => this.setState({ error, status: 'rejected' }));
+            return Promise.reject(
+              new Error(`No pictures with title ${nextQuery}`),
+            );
+          })
+          .then(data => data.hits)
+          .then(images => this.setState({ images, status: 'resolved' }))
+          .catch(error => this.setState({ error, status: 'rejected' }));
+      }, 1000);
     }
   }
 
@@ -43,25 +49,15 @@ class QueryInfo extends Component {
     }
 
     if (status === 'pending') {
-      return <div>Loading...</div>;
+      return <QueryPending />;
     }
 
     if (status === 'rejected') {
-      return <h2>{error.message}</h2>;
+      return <QueryErrorView message={error.message} />;
     }
 
     if (status === 'resolved') {
-      return (
-        <ul>
-          {images.map(({ id, webformatURL, tags }) => {
-            return (
-              <li key={id}>
-                <img src={webformatURL} alt={tags} />
-              </li>
-            );
-          })}
-        </ul>
-      );
+      return <ImageGallery images={images} />;
     }
   }
 }

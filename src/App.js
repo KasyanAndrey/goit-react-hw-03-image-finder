@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 import './App.css';
 
 import QueryInfo from './components/QueryInfo';
 import Searchbar from './components/Searchbar';
-// import ImageGallery from './components/ImageGallery';
-// import ImageGalleryItem from './components/ImageGalleryItem';
 
 class App extends Component {
   state = {

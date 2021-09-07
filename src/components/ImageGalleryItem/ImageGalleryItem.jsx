@@ -1,13 +1,23 @@
-// import React from 'react';
-// import s from './ImageGalleryItem.module.css'
+import React from 'react';
+import s from './ImageGalleryItem.module.css'
 
-// const ImageGalleryItem = () => (
-//   <li className={s.ImageGalleryItem}>
-//     <img src="" alt="" className={s.ImageGalleryItemImage} />
-//   </li>
-// );
+function ImageGalleryItem({ images }) {
+  return (
+    <>
+      {images.map(({ id, webformatURL, tags }) => (
+        <li className={s.ImageGalleryItem} key={id}>
+          <img
+            src={webformatURL}
+            alt={tags}
+            className={s.ImageGalleryItemImage}
+          />
+        </li>
+      ))}
+    </>
+  );
+}
 
-// export default ImageGalleryItem;
+export default ImageGalleryItem;
 
 /* Компонент элемента списка с изображением. Создает DOM-элемент следующей структуры.
 
