@@ -1,1 +1,1 @@
-// export { default } from './servicesApi';
+export { default } from './QueryApi';
