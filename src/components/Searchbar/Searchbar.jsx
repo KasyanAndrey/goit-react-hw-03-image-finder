@@ -13,13 +13,16 @@ class Searchbar extends Component {
 
   onSubmit = event => {
     event.preventDefault();
+    
+    const { searchQuery } = this.state;
+    const { onSubmit } = this.props;
 
-    if (this.state.searchQuery.trim() === '') {
+    if (searchQuery.trim() === '') {
       toast.error('Enter what you need to find.');
       return;
     }
 
-    this.props.onSubmit(this.state.searchQuery);
+    onSubmit(searchQuery);
     this.setState({ searchQuery: '' });
   };
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 import LoaderSpiner from '../Loader';
 import fetchAPI from '../../services';
@@ -19,9 +19,10 @@ class ImageGallery extends Component {
 
   componentDidMount() {
     const { page } = this.state;
+    const { searchQuery } = this.props;
 
     fetchAPI
-      .queryApi(this.props.searchQuery, page)
+      .queryApi(searchQuery, page)
       .then(response =>
         this.setState({ images: response?.hits, isLoading: true }),
       )
@@ -30,9 +31,11 @@ class ImageGallery extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const { searchQuery } = this.props;
+    const { page } = this.state;
+
     const prevQuery = prevProps.searchQuery;
-    const nextQuery = this.props.searchQuery;
-    const { page } = this.state.page;
+    const nextQuery = searchQuery;
 
     if (prevQuery !== nextQuery) {
       this.setState({ isLoading: true, images: [] });
@@ -53,17 +56,18 @@ class ImageGallery extends Component {
   }
 
   handleLoadMore = () => {
+    const { searchQuery } = this.props;
+    const { page } = this.state;
+
     this.setState({ isLoading: true });
 
-    return fetchAPI
-      .queryApi(this.props.searchQuery, this.state.page)
-      .then(newImages =>
-        this.setState(({ images, page }) => ({
-          images: [...images, ...newImages.hits],
-          page: page + 1,
-          isLoading: false,
-        })),
-      );
+    return fetchAPI.queryApi(searchQuery, page).then(newImages =>
+      this.setState(({ images, page }) => ({
+        images: [...images, ...newImages.hits],
+        page: page + 1,
+        isLoading: false,
+      })),
+    );
   };
 
   render() {
@@ -73,12 +77,12 @@ class ImageGallery extends Component {
         {' '}
         {images && (
           <ul className={s.ImageGallery}>
-            {images.map(image => (
+            {images.map(({ webformatURL, largeImageURL, tags }) => (
               <ImageGalleryItem
                 key={uuidv4()}
-                webformatURL={image.webformatURL}
-                largeImageURL={image.largeImageURL}
-                tags={image.tags}
+                webformatURL={webformatURL}
+                largeImageURL={largeImageURL}
+                tags={tags}
               />
             ))}
           </ul>
@@ -92,18 +96,14 @@ class ImageGallery extends Component {
   }
 }
 
-// ImageGallery.propTypes = {
-//   searchQuery: PropTypes.array.isRequired,
-//   onOpen: PropTypes.func.isRequired,
-// };
+ImageGallery.propTypes = {
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      webformatURL: PropTypes.string.isRequired,
+      largeImageURL: PropTypes.string.isRequired,
+      tags: PropTypes.string.isRequired,
+    }),
+  ),
+};
 
 export default ImageGallery;
-// onOpen={this.toggleModal}
-
-/* ({ searchQuery, onOpen }) */
-
-/*  
-  showModal: false,
-    largeImageURL: null,
-  
-  */
