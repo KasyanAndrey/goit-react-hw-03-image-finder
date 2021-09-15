@@ -4,33 +4,34 @@ import { toast } from 'react-toastify';
 
 class Searchbar extends Component {
   state = {
-    searchQuery: '',
+    query: '',
   };
 
-  onChange = event => {
-    this.setState({ searchQuery: event.currentTarget.value.toLowerCase() });
+  handleChange = event => {
+    this.setState({ query: event.currentTarget.value.toLowerCase() });
   };
 
-  onSubmit = event => {
+  handleSubmit = event => {
     event.preventDefault();
-    
-    const { searchQuery } = this.state;
+
+    const { query } = this.state;
     const { onSubmit } = this.props;
 
-    if (searchQuery.trim() === '') {
+    if (query.trim() === '') {
       toast.error('Enter what you need to find.');
       return;
     }
 
-    onSubmit(searchQuery);
-    this.setState({ searchQuery: '' });
+    
+    onSubmit(query);
+    this.setState({ query: '' });
   };
 
   render() {
-    const { searchQuery } = this.state;
+    const { query } = this.state;
     return (
       <header className={s.Searchbar}>
-        <form onSubmit={this.onSubmit} className={s.SearchForm}>
+        <form onSubmit={this.handleSubmit} className={s.SearchForm}>
           <button type="submit" className={s.SearchFormButton}>
             <span className={s.SearchFormButtonLabel}>Search</span>
           </button>
@@ -40,8 +41,8 @@ class Searchbar extends Component {
             type="text"
             name="searchQuery"
             placeholder="Search images and photos"
-            value={searchQuery}
-            onChange={this.onChange}
+            value={query}
+            onChange={this.handleChange}
           />
         </form>
       </header>
