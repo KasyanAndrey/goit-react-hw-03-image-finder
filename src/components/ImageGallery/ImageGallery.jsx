@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { toast } from 'react-toastify';
-
 import PropTypes from 'prop-types';
+
+import { v4 as uuidv4 } from 'uuid';
+import { ToastContainer, toast } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
+import s from './ImageGallery.module.css';
 
 import Searchbar from '../Searchbar';
 import imagesApi from '../../services';
 import LoaderSpiner from '../Loader';
 import ImageGalleryItem from '../ImageGalleryItem';
 import LoadMoreButton from '../Button';
-
-import s from './ImageGallery.module.css';
 
 class ImageGallery extends Component {
   state = {
@@ -22,7 +23,9 @@ class ImageGallery extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.searchQuery !== this.state.searchQuery) {
+    const { searchQuery } = this.state;
+
+    if (prevState.searchQuery !== searchQuery) {
       this.fetchImages();
     }
 
@@ -50,6 +53,13 @@ class ImageGallery extends Component {
     imagesApi
       .fetchImages(options)
       .then(images => {
+        if (images.length === 0) {
+          this.setState({ error: true });
+          toast.error('Please enter a more correct request!');
+
+          return;
+        }
+
         this.setState(prevState => ({
           images: [...prevState.images, ...images],
           currentPage: prevState.currentPage + 1,
@@ -60,7 +70,7 @@ class ImageGallery extends Component {
   };
 
   render() {
-    const { images, isLoading, error } = this.state;
+    const { images, isLoading } = this.state;
     const shouldRenderLoadMoreButton = images.length > 0 && !isLoading;
 
     return (
@@ -82,7 +92,7 @@ class ImageGallery extends Component {
         {shouldRenderLoadMoreButton && (
           <LoadMoreButton onClick={this.fetchImages}></LoadMoreButton>
         )}
-        {error && toast.error('Unfortunately an error has occurred!')}
+        <ToastContainer autoClose={3000} />
       </div>
     );
   }
